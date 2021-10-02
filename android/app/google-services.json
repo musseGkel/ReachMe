@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "337903190538",
+    "project_id": "reachme-efd7f",
+    "storage_bucket": "reachme-efd7f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:337903190538:android:9bde78e4e97840e3c095f3",
+        "android_client_info": {
+          "package_name": "com.muh.reach_me"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "337903190538-28890ko7uge343h1pb02q0l41ttro3lj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.muh.reach_me",
+            "certificate_hash": "2714987b17cbed680ef36b0e8f0f734abafd2da2"
+          }
+        },
+        {
+          "client_id": "337903190538-vum446j6j07te0ulj63t1h5fr3kcf29q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-73vMYXdWDrSvJIs7vCSjmkgBN-78zhw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "337903190538-vum446j6j07te0ulj63t1h5fr3kcf29q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
