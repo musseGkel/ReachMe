@@ -20,14 +20,12 @@ class _SearchPageState extends State<SearchPage> {
   // bool isIntialized = false;
 
   handleSearch(String query) {
-    Future<QuerySnapshot> users =
-        userRef.where('name', isGreaterThanOrEqualTo: query).get();
+    Future<QuerySnapshot> users = userRef
+        .where('name', isGreaterThanOrEqualTo: query)
+        .where('name', isLessThan: query + 'z')
+        .get();
     setState(() {
       searchResults = users;
-      // if (searchResults != null)
-      //   isIntialized = true;
-      // else
-      //   isIntialized = false;
     });
   }
 
