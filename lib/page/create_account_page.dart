@@ -36,7 +36,7 @@ class _CreateAccountState extends State<CreateAccount> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: header(context, titile: 'Create Account'),
+      appBar: header(context, titile: 'Create Account', backButton: false),
       body: Builder(
         builder: (context) => ListView(
           children: [

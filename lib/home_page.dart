@@ -6,7 +6,6 @@ import 'package:reach_me/page/create_account_page.dart';
 import 'package:reach_me/page/profile_page.dart';
 import 'package:reach_me/page/search_page.dart';
 import 'package:reach_me/page/send_page.dart';
-
 import 'models/u/user.dart';
 
 final googleSignIn = GoogleSignIn();

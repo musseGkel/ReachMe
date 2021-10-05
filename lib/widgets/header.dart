@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 AppBar header(BuildContext context,
-    {bool isFeed = false, String titile = 'Profile'}) {
+    {bool isFeed = false, String titile = 'Profile', backButton = true}) {
   return AppBar(
+    automaticallyImplyLeading: backButton,
     title: Text(
       isFeed ? 'ReachMe' : titile,
       style: TextStyle(
