@@ -7,11 +7,14 @@ import 'package:reach_me/page/profile_page.dart';
 import 'package:reach_me/page/search_page.dart';
 import 'package:reach_me/page/send_page.dart';
 import 'models/u/user.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 final googleSignIn = GoogleSignIn();
 final userRef = FirebaseFirestore.instance.collection('users');
+final postsRef = FirebaseFirestore.instance.collection('posts');
 final DateTime timestamp = DateTime.now();
 late User currentUser;
+final storageRef = firebase_storage.FirebaseStorage.instance.ref();
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -58,9 +61,9 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  handleAccount(account) {
+  handleAccount(account) async {
     if (account != null) {
-      createAccount();
+      await createAccount();
       setState(() {
         isAuth = true;
       });
@@ -137,7 +140,7 @@ class _HomePageState extends State<HomePage> {
           ),
           // FeedPage(),
           ActivityLog(),
-          SendPage(),
+          SendPage(currentUser: currentUser),
           SearchPage(),
           ProfilePage()
         ],
@@ -145,8 +148,9 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTap,
         currentIndex: pageIndex,
-        selectedItemColor: Theme.of(context).accentColor,
-        unselectedItemColor: Theme.of(context).accentColor.withOpacity(0.5),
+        selectedItemColor: Theme.of(context).colorScheme.secondary,
+        unselectedItemColor:
+            Theme.of(context).colorScheme.secondary.withOpacity(0.5),
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.whatshot),
@@ -183,7 +187,7 @@ class _HomePageState extends State<HomePage> {
             end: Alignment.bottomLeft,
             colors: [
               Theme.of(context).primaryColor,
-              Theme.of(context).accentColor,
+              Theme.of(context).colorScheme.secondary,
             ],
           ),
         ),

@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:reach_me/home_page.dart';
 import 'package:reach_me/models/u/user.dart';
 import 'package:reach_me/widgets/loadng.dart';
 import 'package:image/image.dart' as Img;
@@ -23,7 +25,8 @@ class _SendPageState extends State<SendPage> {
   bool isUploading = false;
   final ImagePicker picker = ImagePicker();
   String postId = Uuid().v4();
-
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
   pickFromCamera() async {
     Navigator.pop(context);
     final XFile? fromCamera = await picker.pickImage(
@@ -71,10 +74,44 @@ class _SendPageState extends State<SendPage> {
       isUploading = true;
     });
     await compressImage();
-    await uploadImage(imageFile);
+    String downloadLink = await uploadImage(imageFile);
+    createPostinFirestore(
+        downloadLink: downloadLink,
+        location: locationController.text,
+        description: descriptionController.text);
+    descriptionController.clear();
+    locationController.clear();
+    setState(() {
+      imageFile = null;
+      isUploading = false;
+    });
   }
 
-  uploadImage(image) {}
+  createPostinFirestore({downloadLink, location, description}) {
+    postsRef
+        .doc(widget.currentUser.id)
+        .collection('userPosts')
+        .doc(postId)
+        .set({
+      'postId': postId,
+      'ownerId': widget.currentUser.id,
+      'username': widget.currentUser.username,
+      'mediaLink': downloadLink,
+      'description': description,
+      'location': location,
+      'timestamp': timestamp,
+      'likes': {}
+    });
+  }
+
+  Future<String> uploadImage(image) async {
+    final reference = storageRef.child('post_$postId.jpg');
+    final storageSnap = await reference.putFile(image);
+
+    String downloadLink = await storageSnap.ref.getDownloadURL();
+
+    return downloadLink;
+  }
 
   compressImage() async {
     final tempDir = await getTemporaryDirectory();
@@ -82,7 +119,7 @@ class _SendPageState extends State<SendPage> {
     Img.Image? uncompressedImage =
         Img.decodeImage(imageFile!.readAsBytesSync());
     final compressedImage = File('$tempPath/img_$postId.jpg')
-      ..writeAsBytesSync(Img.encodeJpg(uncompressedImage!, quality: 85));
+      ..writeAsBytesSync(Img.encodeJpg(uncompressedImage!, quality: 55));
 
     setState(() {
       imageFile = compressedImage;
@@ -104,6 +141,8 @@ class _SendPageState extends State<SendPage> {
           onPressed: () {
             setState(() {
               imageFile = null;
+              isUploading = false;
+              postId = Uuid().v4();
             });
           },
         ),
@@ -113,7 +152,7 @@ class _SendPageState extends State<SendPage> {
             onPressed: isUploading ? null : () => handleSending(),
             child: Text(
               'Post',
-              style: TextStyle(color: Colors.blue.shade100),
+              style: TextStyle(color: Colors.white),
             ),
           ),
         ],
@@ -149,6 +188,7 @@ class _SendPageState extends State<SendPage> {
                   CachedNetworkImageProvider(widget.currentUser.photoUrl),
             ),
             title: TextField(
+              controller: descriptionController,
               decoration: InputDecoration(
                   hintText: 'Write down a caption ', border: InputBorder.none),
             ),
@@ -162,6 +202,7 @@ class _SendPageState extends State<SendPage> {
               color: Colors.green.shade400,
             ),
             title: TextField(
+              controller: locationController,
               decoration: InputDecoration(
                   hintText: 'Where was this photo taken?',
                   border: InputBorder.none),
