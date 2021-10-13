@@ -23,7 +23,7 @@ dependencies:
   image: ^3.0.8
   path_provider: ^2.0.5
   firebase_storage: ^10.0.5
-  #geolocator: ^7.7.0
+  geolocator: ^7.7.0
 
 dev_dependencies:
   flutter_test:

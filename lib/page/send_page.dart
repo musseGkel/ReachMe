@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
@@ -168,10 +167,9 @@ class _SendPageState extends State<SendPage> {
                 aspectRatio: 16 / 9,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.redAccent,
+                    color: Theme.of(context).colorScheme.primary,
                     image: DecorationImage(
                       image: FileImage(imageFile!),
-                      // image: FileImage(File(imageFile!.path)),
                       fit: BoxFit.cover,
                     ),
                   ),
