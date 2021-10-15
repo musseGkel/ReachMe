@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:reach_me/home_page.dart';
@@ -106,9 +108,7 @@ class _SendPageState extends State<SendPage> {
   Future<String> uploadImage(image) async {
     final reference = storageRef.child('post_$postId.jpg');
     final storageSnap = await reference.putFile(image);
-
     String downloadLink = await storageSnap.ref.getDownloadURL();
-
     return downloadLink;
   }
 
@@ -119,10 +119,24 @@ class _SendPageState extends State<SendPage> {
         Img.decodeImage(imageFile!.readAsBytesSync());
     final compressedImage = File('$tempPath/img_$postId.jpg')
       ..writeAsBytesSync(Img.encodeJpg(uncompressedImage!, quality: 55));
-
     setState(() {
       imageFile = compressedImage;
     });
+  }
+
+  getUserLocation() async {
+    //LocationPermission permission = await Geolocator.checkPermission();
+
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    print(position.latitude);
+    print(position.longitude);
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    print(placemarks[0].locality);
+    print(placemarks[0].country);
+    locationController.text =
+        '${placemarks[0].locality}, ${placemarks[0].country}';
   }
 
   @override
@@ -212,7 +226,7 @@ class _SendPageState extends State<SendPage> {
             alignment: Alignment.center,
             //decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
             child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: getUserLocation,
                 icon: Icon(Icons.my_location),
                 label: Text('Use current location')),
           )
