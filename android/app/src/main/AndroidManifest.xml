@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.muh.reach_me">
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
    <application
         android:label="reach_me"
         android:icon="@mipmap/ic_launcher">
@@ -38,4 +41,5 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+
 </manifest>

@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage> {
           ActivityLog(),
           SendPage(currentUser: currentUser),
           SearchPage(),
-          ProfilePage()
+          ProfilePage(profileId: currentUser.id)
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
