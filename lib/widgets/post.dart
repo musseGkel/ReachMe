@@ -1,8 +1,12 @@
+import 'dart:async';
+
+import 'package:animator/animator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:reach_me/home_page.dart';
 import 'package:reach_me/models/u/user.dart';
+import 'package:reach_me/page/comments_page.dart';
 import 'package:reach_me/widgets/customized_widgets.dart';
 import 'package:reach_me/widgets/loadng.dart';
 
@@ -68,6 +72,7 @@ class _PostState extends State<Post> {
 
   bool? isliked;
   String currentUserId = currentUser.id;
+  bool showHeartBeat = false;
 
   _PostState({
     required this.likeCount,
@@ -110,20 +115,26 @@ class _PostState extends State<Post> {
           .update({'likes.$currentUserId': false});
       setState(() {
         likeCount--;
-        // isliked = false;
+        isliked = false;
         likes[currentUserId] = false;
       });
-    } else if (!_isliked) {
-      //_isliked == false
+    } else if (!_isliked) //_isliked == false
+    {
       postsRef
           .doc(ownerId)
           .collection('userPosts')
           .doc(postId)
           .update({'likes.$currentUserId': true});
       setState(() {
-        //isliked = true;
+        isliked = true;
         likeCount++;
         likes[currentUserId] = true;
+        showHeartBeat = true;
+      });
+      Timer(Duration(milliseconds: 600), () {
+        setState(() {
+          showHeartBeat = false;
+        });
       });
     }
   }
@@ -132,8 +143,21 @@ class _PostState extends State<Post> {
     return GestureDetector(
       onDoubleTap: handleLike,
       child: Stack(
+        alignment: Alignment.center,
         children: [
           cachedNetworkImage(mediaLink),
+          showHeartBeat
+              ? Animator<double>(
+                  tween: Tween(begin: 0.8, end: 1.7),
+                  duration: Duration(milliseconds: 500),
+                  curve: Curves.elasticOut,
+                  cycles: 0,
+                  builder: (_, anim, __) => Transform.scale(
+                      scale: anim.value,
+                      child:
+                          Icon(Icons.favorite, size: 100, color: Colors.pink)),
+                )
+              : Text(''),
         ],
       ),
     );
@@ -146,20 +170,23 @@ class _PostState extends State<Post> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             GestureDetector(
-              onTap: handleLike,
-              child: isliked == true
-                  ? Icon(
-                      Icons.favorite,
-                      color: Colors.pink,
-                      size: 28,
-                    )
-                  : Icon(
-                      Icons.favorite_border,
-                      color: Colors.pink,
-                      size: 28,
-                    ),
-            ),
+                onTap: handleLike,
+                child: Icon(
+                  isliked == true ? Icons.favorite : Icons.favorite_border,
+                  color: Colors.pink,
+                  size: 28,
+                )),
             GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Comments(
+                              postId: postId,
+                              postMediaLink: mediaLink,
+                              postOwnerId: ownerId,
+                            )));
+              },
               child: Icon(
                 Icons.chat,
                 color: Colors.blue,
