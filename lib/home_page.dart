@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:reach_me/page/activity_log_page.dart';
 import 'package:reach_me/page/create_account_page.dart';
+import 'package:reach_me/page/notfication_page.dart';
 import 'package:reach_me/page/profile_page.dart';
 import 'package:reach_me/page/search_page.dart';
 import 'package:reach_me/page/send_page.dart';
@@ -13,6 +13,7 @@ final googleSignIn = GoogleSignIn();
 final userRef = FirebaseFirestore.instance.collection('users');
 final postsRef = FirebaseFirestore.instance.collection('posts');
 final commentRef = FirebaseFirestore.instance.collection('comments');
+final notificationRef = FirebaseFirestore.instance.collection('notifications');
 final DateTime timestamp = DateTime.now();
 late User currentUser;
 final storageRef = firebase_storage.FirebaseStorage.instance.ref();
@@ -139,8 +140,8 @@ class _HomePageState extends State<HomePage> {
             },
             child: Text('Logout'),
           ),
-          // FeedPage(),
-          ActivityLog(),
+          // ActivityLog(),
+          NotficationPage(),
           SendPage(currentUser: currentUser),
           SearchPage(),
           ProfilePage(profileId: currentUser.id)

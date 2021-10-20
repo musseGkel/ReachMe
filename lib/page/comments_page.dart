@@ -40,8 +40,23 @@ class _CommentsState extends State<Comments> {
       'timestamp': DateTime.now(),
       'profilePic': currentUser.photoUrl,
     });
-
+    addCommentToFeed();
     commentController.clear();
+  }
+
+  addCommentToFeed() {
+    if (currentUser.id == postOwnerId) {
+      notificationRef.doc(postOwnerId).collection('notifications').add({
+        'type': 'comment',
+        'message': commentController.text,
+        'username': currentUser.username,
+        'userId': currentUser.id,
+        'profilePic': currentUser.photoUrl,
+        'postId': postId,
+        'mediaLink': postMediaLink,
+        'timestamp': DateTime.now()
+      });
+    }
   }
 
   displayComments() {
