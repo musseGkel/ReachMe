@@ -4,6 +4,12 @@ import 'package:firebase_core/firebase_core.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // FirebaseFirestore.instance.settings(timestampInSnapshotsEnabled: true).then(
+  //     (_) {
+  //   print('Timestamps enabled in snpshots\n');
+  // }, onError: () {
+  //   print('there was an error enabling timestamp in snapshots');
+  // });
   await Firebase.initializeApp();
   runApp(MyApp());
 }

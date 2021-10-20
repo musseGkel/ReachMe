@@ -100,7 +100,7 @@ class _SendPageState extends State<SendPage> {
       'mediaLink': downloadLink,
       'description': description,
       'location': location,
-      'timestamp': timestamp,
+      'timestamp': DateTime.now(),
       'likes': {}
     });
   }

@@ -25,6 +25,8 @@ dependencies:
   firebase_storage: ^10.0.5
   geolocator: 7.7.0
   geocoding: ^2.0.1
+  animator: ^3.1.0
+  timeago: ^3.1.0
 
 dev_dependencies:
   flutter_test:

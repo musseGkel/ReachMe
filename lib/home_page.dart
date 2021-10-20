@@ -12,6 +12,7 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 final googleSignIn = GoogleSignIn();
 final userRef = FirebaseFirestore.instance.collection('users');
 final postsRef = FirebaseFirestore.instance.collection('posts');
+final commentRef = FirebaseFirestore.instance.collection('comments');
 final DateTime timestamp = DateTime.now();
 late User currentUser;
 final storageRef = firebase_storage.FirebaseStorage.instance.ref();
