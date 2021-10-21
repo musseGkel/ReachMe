@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:reach_me/home_page.dart';
+import 'package:reach_me/page/post_page.dart';
+import 'package:reach_me/page/profile_page.dart';
 import 'package:reach_me/widgets/header.dart';
 import 'package:reach_me/widgets/loadng.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -82,10 +84,16 @@ class NotificationItem extends StatelessWidget {
       timestamp: doc['timestamp'],
     );
   }
-  configureMediaPreview() {
+  configureMediaPreview(BuildContext context) {
     if (type == 'like' || type == 'comment') {
       mediaPreview = GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      PostPage(userId: userId, postId: postId)));
+        },
         child: Container(
           height: 50,
           width: 50,
@@ -114,19 +122,22 @@ class NotificationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    configureMediaPreview();
+    configureMediaPreview(context);
     return Container(
       child: ListTile(
-        title: RichText(
-            overflow: TextOverflow.ellipsis,
-            text: TextSpan(
-                style: TextStyle(fontSize: 14.0, color: Colors.black),
-                children: [
-                  TextSpan(
-                      text: username + ' ',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  TextSpan(text: notificationText)
-                ])),
+        title: GestureDetector(
+          onTap: () => showProfile(context, profileId: userId),
+          child: RichText(
+              overflow: TextOverflow.ellipsis,
+              text: TextSpan(
+                  style: TextStyle(fontSize: 14.0, color: Colors.black),
+                  children: [
+                    TextSpan(
+                        text: username + ' ',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    TextSpan(text: notificationText)
+                  ])),
+        ),
         subtitle: Text(timeago.format(timestamp.toDate())),
         trailing: mediaPreview,
         leading: CircleAvatar(
@@ -135,4 +146,11 @@ class NotificationItem extends StatelessWidget {
       ),
     );
   }
+}
+
+showProfile(BuildContext context, {required String profileId}) {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => ProfilePage(profileId: profileId)));
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:reach_me/home_page.dart';
 import 'package:reach_me/models/u/user.dart';
+import 'package:reach_me/page/notfication_page.dart';
 import 'package:reach_me/widgets/loadng.dart';
 
 class SearchPage extends StatefulWidget {
@@ -118,6 +119,7 @@ class UserResult extends StatelessWidget {
       child: Column(
         children: [
           GestureDetector(
+            onTap: () => showProfile(context, profileId: user.id),
             child: ListTile(
               leading: CircleAvatar(
                 backgroundImage: CachedNetworkImageProvider(user.photoUrl),

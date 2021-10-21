@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:reach_me/home_page.dart';
 import 'package:reach_me/models/u/user.dart';
 import 'package:reach_me/page/comments_page.dart';
+import 'package:reach_me/page/notfication_page.dart';
 import 'package:reach_me/widgets/customized_widgets.dart';
 import 'package:reach_me/widgets/loadng.dart';
 
@@ -94,7 +95,9 @@ class _PostState extends State<Post> {
           leading: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(user.photoUrl),
           ),
-          title: GestureDetector(child: Text(user.username)),
+          title: GestureDetector(
+              onTap: () => showProfile(context, profileId: ownerId),
+              child: Text(user.username)),
           subtitle: Text(location),
           trailing: IconButton(
             onPressed: () {},

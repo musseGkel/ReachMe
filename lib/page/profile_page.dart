@@ -108,7 +108,7 @@ class _ProfilePageState extends State<ProfilePage> {
         function: editProfile,
       );
     } else
-      Container();
+      Text('Follow');
   }
 
   buildHeaderProfile() {
