@@ -26,7 +26,6 @@ class _NotficationPageState extends State<NotficationPage> {
         .get();
     snapshot.docs.forEach((doc) {
       notificationItems.add(NotificationItem.deserialize(doc));
-      // print('Notification : ${doc.data()}');
     });
     return notificationItems; //snapshot.docs;
   }

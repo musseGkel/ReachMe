@@ -26,11 +26,48 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isLoading = false;
   List<Post> posts = [];
   Orientation postOrientation = Orientation.grid;
+  bool isFollowing = false;
+  int followingCount = 0;
+  int followersCount = 0;
 
   @override
   void initState() {
     super.initState();
     getProfilePosts();
+    getFollowers();
+    getFollowing();
+    checkIfFollowing();
+  }
+
+  getFollowers() async {
+    QuerySnapshot snapshot = await followersRef
+        .doc(widget.profileId)
+        .collection('userFollowers')
+        .get();
+    setState(() {
+      followersCount = snapshot.docs.length;
+    });
+  }
+
+  getFollowing() async {
+    QuerySnapshot snapshot = await followingRef
+        .doc(widget.profileId)
+        .collection('userFollowing')
+        .get();
+    setState(() {
+      followingCount = snapshot.docs.length;
+    });
+  }
+
+  checkIfFollowing() async {
+    DocumentSnapshot snapshot = await followersRef
+        .doc(widget.profileId)
+        .collection('userFollowers')
+        .doc(currentUserId)
+        .get();
+    setState(() {
+      isFollowing = snapshot.exists;
+    });
   }
 
   getProfilePosts() async {
@@ -78,14 +115,14 @@ class _ProfilePageState extends State<ProfilePage> {
         width: 240,
         height: 28,
         decoration: BoxDecoration(
-            color: Colors.blue,
+            color: isFollowing ? Colors.white : Colors.blue,
             borderRadius: BorderRadius.circular(5),
             border: Border.all(
-              color: Colors.blue,
+              color: isFollowing ? Colors.grey : Colors.blue,
             )),
         child: Text(
           text,
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: isFollowing ? Colors.black : Colors.white),
         ),
       ),
     );
@@ -107,8 +144,81 @@ class _ProfilePageState extends State<ProfilePage> {
         text: 'Edit Profile',
         function: editProfile,
       );
-    } else
-      Text('Follow');
+    } else if (isFollowing)
+      return buildButton(
+        text: 'Following',
+        function: handleUnfollow,
+      );
+    else if (!isFollowing)
+      return buildButton(
+        text: 'Follow',
+        function: handleFollow,
+      );
+  }
+
+  handleFollow() {
+    followersRef
+        .doc(widget.profileId)
+        .collection('userFollowers')
+        .doc(currentUserId)
+        .set({});
+    followingRef
+        .doc(currentUserId)
+        .collection('userFollowing')
+        .doc(widget.profileId)
+        .set({});
+    notificationRef
+        .doc(widget.profileId)
+        .collection('notifications')
+        .doc(currentUserId)
+        .set({
+      'type': 'follow',
+      'ownerId': widget.profileId,
+      'username': currentUser.username,
+      'userId': currentUser.id,
+      'profilePic': currentUser.photoUrl,
+      'timestamp': DateTime.now()
+    });
+    setState(() {
+      isFollowing = true;
+    });
+  }
+
+  handleUnfollow() {
+    followersRef
+        .doc(widget.profileId)
+        .collection('userFollowers')
+        .doc(currentUserId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+
+    followingRef
+        .doc(currentUserId)
+        .collection('userFollowing')
+        .doc(widget.profileId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+    notificationRef
+        .doc(widget.profileId)
+        .collection('notifications')
+        .doc(currentUserId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+    setState(() {
+      isFollowing = false;
+    });
   }
 
   buildHeaderProfile() {
@@ -140,8 +250,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             buildCount('posts', postCount),
-                            buildCount('followers', 2),
-                            buildCount('following', 2),
+                            buildCount('followers', followersCount),
+                            buildCount('following', followingCount),
                           ],
                         ),
                         SizedBox(
