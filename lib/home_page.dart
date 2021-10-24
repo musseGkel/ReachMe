@@ -6,6 +6,7 @@ import 'package:reach_me/page/notfication_page.dart';
 import 'package:reach_me/page/profile_page.dart';
 import 'package:reach_me/page/search_page.dart';
 import 'package:reach_me/page/send_page.dart';
+import 'package:reach_me/page/timeline_page.dart';
 import 'models/u/user.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
@@ -110,6 +111,13 @@ class _HomePageState extends State<HomePage> {
           'bio': ''
         },
       );
+      //make new user follow thier self
+      await followingRef
+          .doc(user.id)
+          .collection('userFollowing')
+          .doc(user.id)
+          .set({});
+      //update the doc with the new user's info
       doc = await userRef.doc(user.id).get();
     }
     currentUser = User.deSerialize(doc);
@@ -136,13 +144,7 @@ class _HomePageState extends State<HomePage> {
         physics: NeverScrollableScrollPhysics(),
         onPageChanged: onPageChanged,
         children: [
-          ElevatedButton(
-            onPressed: () {
-              logout();
-            },
-            child: Text('Logout'),
-          ),
-          // ActivityLog(),
+          TimelinePage(currentUser: currentUser),
           NotficationPage(),
           SendPage(currentUser: currentUser),
           SearchPage(),
@@ -158,10 +160,10 @@ class _HomePageState extends State<HomePage> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.whatshot),
-            label: 'Feed',
+            label: 'Timeline',
           ),
           BottomNavigationBarItem(
-            label: 'Activity',
+            label: 'Notifications',
             icon: Icon(Icons.notifications_active),
           ),
           BottomNavigationBarItem(

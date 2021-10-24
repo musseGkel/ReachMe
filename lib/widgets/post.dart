@@ -99,13 +99,78 @@ class _PostState extends State<Post> {
               onTap: () => showProfile(context, profileId: ownerId),
               child: Text(user.username)),
           subtitle: Text(location),
-          trailing: IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.more_vert),
-          ),
+          trailing: currentUserId == ownerId
+              ? IconButton(
+                  onPressed: () {
+                    handleDeletePost(context);
+                  },
+                  icon: Icon(Icons.more_vert),
+                )
+              : Text(''),
         );
       },
     );
+  }
+
+  handleDeletePost(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(
+          'Delete this Post',
+        ),
+        children: [
+          SimpleDialogOption(
+            onPressed: () {
+              deletePost();
+              Navigator.pop(context);
+            },
+            child: Text('Yes'),
+          ),
+          SimpleDialogOption(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('No'),
+          )
+        ],
+      ),
+    );
+  }
+
+  deletePost() async {
+    //deleting the post from posts
+    await postsRef
+        .doc(ownerId)
+        .collection('userPosts')
+        .doc(postId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+    //deleting the post's image from posts
+    storageRef.child('post_$postId.jpg').delete();
+    //deleting all the post's notifications
+    QuerySnapshot querySnapshot = await notificationRef
+        .doc(ownerId)
+        .collection('notifications')
+        .where('postId', isEqualTo: postId)
+        .get();
+    querySnapshot.docs.forEach((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+    //deleting all the post's comments
+    QuerySnapshot commentsQuerySnapshot =
+        await commentRef.doc(postId).collection('comments').get();
+    commentsQuerySnapshot.docs.forEach((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
   }
 
   handleLike() {
